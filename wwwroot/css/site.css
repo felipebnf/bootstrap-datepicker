@@ -1,0 +1,31 @@
+html{
+  display: flex;
+  align-content: center;
+  align-items: center;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+header.header {
+  display: flex;
+  justify-content: center;
+}
+
+body.body {
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+  width: 100%;
+}
+
+footer.footer{
+  bottom: 0;
+  position: absolute;
+  width: 100%;
+}
+
+.celula {
+  border-radius: 8;
+  background-color: red !important;
+  color: white !important;
+}

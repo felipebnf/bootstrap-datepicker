@@ -1,0 +1,54 @@
+﻿<div class="row">
+    <div class="col-6 offset-3">
+        <form>
+            <div class="row form-group">
+                <label for="date" class="col-sm-2 col-form-label">Date</label>
+                <div class="col-sm-10">
+                    <div class="input-group date">
+                        <input type="text" class="form-control datepicker">
+                        <span class="input-group-append">
+                            <span class="input-group-text bg-white">
+                                <i class="fa fa-calendar"></i>
+                            </span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        
+        //Array de teste com duas datas, usar toLocaleString para melhor comparacao
+        const datasAgendadas = [
+            new Date(2023, 9, 16, 0, 0, 0).toLocaleString(),
+            new Date(2023, 9, 17, 0, 0, 0).toLocaleString(),
+        ]
+
+        function estilizarDatas(data) {
+
+            if (datasAgendadas.includes(data.toLocaleString())) {
+
+                console.log('Data agendada', data.toLocaleString())
+                return {
+                    enabled: true, // Habilita ou não a célula da data
+                    classes: 'celula', // classe CSS que estiliza a célula da data [wwwwroot\css\site.css]
+                    tooltip: 'Agendada' // Texto ao passar o mouse por cima da célula da data
+                }
+            }
+
+            return{
+                enabled: false,
+                classes: '',
+                tooltip: 'Não agendada'
+            }
+        }
+
+        $('.datepicker').datepicker({
+            todayHighlight: true,
+            beforeShowDay: estilizarDatas
+        });
+    });
+</script>
