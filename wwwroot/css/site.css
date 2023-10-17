@@ -26,6 +26,12 @@ footer.footer{
 
 .celula {
   border-radius: 8;
-  background-color: red !important;
+  background-color: rgba(218, 204, 15, 0.808) !important;
+  color: black;
+}
+
+.celulaSelecionada {
+  border-radius: 8;
+  background-color: #006dcc !important;
   color: white !important;
 }
