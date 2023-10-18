@@ -1,7 +1,7 @@
 ﻿@model TesteViewModel
 <div class="row">
     <div class="col-6 offset-3">
-        <form>
+        <form asp-action="Index" asp-controller="Home" method="get">
             @if (Model.Datas?.Count > 0)
             {
                 @foreach (var item in Model.Datas)
@@ -13,7 +13,7 @@
                 <label for="date" class="col-sm-2 col-form-label">Date</label>
                 <div class="col-sm-10">
                     <div class="input-group date">
-                        <input type="text" class="form-control datepicker" value="@(Model.Data)">
+                        <input type="text" class="form-control datepicker" name="dataSelecionada" value="@(Model.Data)">
                         <span class="input-group-append">
                             <span class="input-group-text bg-white">
                                 <i class="fa fa-calendar"></i>
@@ -29,48 +29,76 @@
 <script type="text/javascript">
     $(function () {
 
-        // Extraindo datas da List vindo da Model
-        let datasAgendadas = []
-        $('input[name="data[]"]').each((i, e) => { datasAgendadas.push($(e).val().split(" ")[0]) })
-        console.log('datasAgendadas', datasAgendadas)
-
-        // Caso queria desabilitar Datas exceto as agendadas
-        let datasDesabilitadas = desabilitarDatas(datasAgendadas)
+        let inputDataSelecionada = $('input[name="dataSelecionada"]');
+        let dataSelecionada = $('input[name="dataSelecionada"]').val();
+        let mesReferencia = parseInt(dataSelecionada.split('/')[1]) - 1;
+        let anoReferencia = dataSelecionada.split('/')[2];
+        let datasDisponiveis = []
+        $('input[name="data[]"]').each((i, e) => { datasDisponiveis.push($(e).val().split(' ')[0]) });
+        console.log('dataSelecionada', dataSelecionada);
+        console.log('datasDisponiveis', datasDisponiveis.length);
 
         function estilizarDatas(data) {
-            if (datasAgendadas.includes(data.toLocaleString().split(",")[0])) {
-                console.log('Data agendada estilizada', data.toLocaleString())
-                return {
-                    enabled: true, // Habilita ou não a célula da data
-                    classes: 'celula', // classe CSS que estiliza a célula da data [wwwwroot\css\site.css]
-                    tooltip: 'Agendada' // Texto ao passar o mouse por cima da célula da data
+            let dataEstilizada = data.toLocaleString().split(",")[0]
+
+            if (mesReferencia === data.getUTCMonth()) {
+                if (datasDisponiveis.includes(dataEstilizada)) {
+
+                    if (dataEstilizada === dataSelecionada) {
+                        return {
+                            enabled: true,
+                            classes: 'celulaSelecionada', // classe CSS que estiliza a célula da data [wwwwroot\css\site.css]
+                            tooltip: ''
+                        }
+                    }
+                    return {
+                        enabled: true,
+                        classes: 'celula', // classe CSS que estiliza a célula da data [wwwwroot\css\site.css]
+                        tooltip: ''
+                    }
                 }
             }
+
+            return false
+
         }
 
-        function desabilitarDatas(lista) {
+        function desabilitarDatasPorMes(lista, mesReferencia, anoReferencia) {
+            console.log(mesReferencia)
             let datasDesabilitadas = [];
-            let primeiroDia = new Date(new Date().getUTCFullYear(), new Date().getUTCMonth(), 1, 0, 0, 0, 0);
-            while (primeiroDia.getUTCMonth() === new Date().getUTCMonth()) {
-                if (!datasAgendadas.includes(primeiroDia.toLocaleDateString())) {
-                    datasDesabilitadas.push(primeiroDia.toLocaleDateString().split(" ")[0]);
+            dataInicial = new Date(anoReferencia, mesReferencia--, 1, 0, 0, 0, 0);
+
+            while (dataInicial.getUTCMonth() === mesReferencia) {
+                let dataAuxiliarString = dataInicial.toLocaleDateString();
+
+                if (!datasDisponiveis.includes(dataAuxiliarString)) {
+                    datasDesabilitadas.push(dataAuxiliarString);
                 }
-                primeiroDia.setUTCDate(primeiroDia.getUTCDate() + 1);
+                dataInicial.setUTCDate(dataInicial.getUTCDate() + 1);
             }
-            console.log('datasDesabilitadas', datasDesabilitadas);
             return datasDesabilitadas;
         }
 
         $('.datepicker').datepicker({
             format: 'dd/mm/yyyy',
             beforeShowDay: estilizarDatas,
-            //datesDisabled: datasDesabilitadas 
-        });
-
-        // Customiza a data selecionada (.active para o datepicker)
-        $('.datepicker').change((e) => {
-            $('div.datepicker-days > table > tbody > td').removeClass('celulaSelecionada')
-            $('div.datepicker-days > table > tbody > td.active').addClass('celulaSelecionada')
+            startDate: datasDisponiveis[0],
+            endDate: datasDisponiveis[datasDisponiveis.length - 1],
+            templates: {
+                leftArrow: '<i class="fa fa-long-arrow-left"></i>',
+                rightArrow: '<i class="fa fa-long-arrow-right"></i>'
+            },
+            maxViewMode: 'days'
+        }).on('changeDate', function (event) {
+            let novaDataSelecionada = event.format('dd/mm/yyyy'); // retorna event.date formatado
+            console.log(novaDataSelecionada);
+            inputDataSelecionada.val(novaDataSelecionada);
+            $('form').submit();
+        }).on('changeMonth', function (event) {
+            mesReferencia = event.date.getUTCMonth();
+            anoReferencia = event.date.getUTCFullYear();
+        }).on('show', function (event) {
+            $('td.active').removeClass('active');
         });
     });
 </script>

@@ -13,23 +13,32 @@ public class HomeController : Controller
         _logger = logger;
     }
 
-    public IActionResult Index(DateTime? selecionada)
+    [HttpGet]
+    public IActionResult Index(string? dataSelecionada)
     {
 
         var lista = new List<DateTime>()
         {
-            // new DateTime(2023,10,16),
-            new DateTime(2023,10,17),
-            new DateTime(2023,10,18)
+            new (2023,9,10),
+            new (2023,9,11),
+            new (2023,10,17),
+            new (2023,10,18),
+            new (2023,10,30),
+            new (2023,10,31),
+            new (2023,11,5),
+            new (2023,11,7),
         };
-        var data = selecionada ?? DateTime.Now;
-        if (selecionada != null)
-            lista.Add((DateTime)selecionada);
-        var viewModel = new TesteViewModel()
+        var viewModel = new TesteViewModel();
+        if (dataSelecionada == null)
         {
-            Data = data.ToString("dd/MM/yyyy"),
-            Datas = lista
-        };
+            viewModel.Data = DateTime.Now.ToString("dd/MM/yyyy");
+        }
+        else
+        {
+            var dataArray = dataSelecionada.Split('/');
+            viewModel.Data = new DateTime(int.Parse(dataArray[2]), int.Parse(dataArray[1]), int.Parse(dataArray[0])).ToString("dd/MM/yyyy");
+        }
+        viewModel.Datas = lista;
         return View(viewModel);
     }
 

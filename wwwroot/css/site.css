@@ -1,4 +1,4 @@
-html{
+html {
   display: flex;
   align-content: center;
   align-items: center;
@@ -18,20 +18,29 @@ body.body {
   width: 100%;
 }
 
-footer.footer{
+footer.footer {
   bottom: 0;
   position: absolute;
   width: 100%;
 }
 
 .celula {
-  border-radius: 8;
-  background-color: rgba(218, 204, 15, 0.808) !important;
   color: black;
+  font-weight: bold;
 }
 
 .celulaSelecionada {
-  border-radius: 8;
-  background-color: #006dcc !important;
-  color: white !important;
+  border-radius: 8px;
+  background-color:  #006dcc ;
+  color: white;
+  font-weight: bold;
+}
+
+.datepicker table tbody tr td.old,
+.datepicker table tbody tr td.old:hover,
+.datepicker table tbody tr td.new,
+.datepicker table tbody tr td.new:hover {
+  color: #FFF;
+  background-color: #FFF;
+  cursor: auto;
 }
