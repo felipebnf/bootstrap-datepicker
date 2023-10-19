@@ -9,5 +9,8 @@ namespace bootstrap_datepicker.Models
     {
         public string? Data { get; set; }
         public List<DateTime>? Datas { get; set; }
+
+        public int MesAnterior {get;set;}
+        public int MesProximo {get;set;}
     }
 }

@@ -4,6 +4,8 @@
         <form asp-action="Index" asp-controller="Home" method="get">
             @if (Model.Datas?.Count > 0)
             {
+                <input type="hidden" name="dataInicial" value="@ViewBag.DataInicial" />
+                <input type="hidden" name="dataFinal" value="@ViewBag.DataFinal" />
                 @foreach (var item in Model.Datas)
                 {
                     <input type="hidden" name="data[]" value="@item" />
@@ -31,72 +33,58 @@
 
         let inputDataSelecionada = $('input[name="dataSelecionada"]');
         let dataSelecionada = $('input[name="dataSelecionada"]').val();
-        let mesReferencia = parseInt(dataSelecionada.split('/')[1]) - 1;
-        let anoReferencia = dataSelecionada.split('/')[2];
+        let dataInicial = $('input[name="dataInicial"]').val();
+        let dataFinal = $('input[name="dataFinal"]').val();
         let datasDisponiveis = []
         $('input[name="data[]"]').each((i, e) => { datasDisponiveis.push($(e).val().split(' ')[0]) });
         console.log('dataSelecionada', dataSelecionada);
         console.log('datasDisponiveis', datasDisponiveis.length);
 
         function estilizarDatas(data) {
+
             let dataEstilizada = data.toLocaleString().split(",")[0]
+            if (datasDisponiveis.includes(dataEstilizada)) {
 
-            if (mesReferencia === data.getUTCMonth()) {
-                if (datasDisponiveis.includes(dataEstilizada)) {
-
-                    if (dataEstilizada === dataSelecionada) {
-                        return {
-                            enabled: true,
-                            classes: 'celulaSelecionada', // classe CSS que estiliza a célula da data [wwwwroot\css\site.css]
-                            tooltip: ''
-                        }
-                    }
+                if (dataEstilizada === dataSelecionada) {
+                    @* let classNames = ''
+                    if (dataEstilizada === new Date().toLocaleDateString()) {
+                        return false;
+                    } *@
                     return {
                         enabled: true,
-                        classes: 'celula', // classe CSS que estiliza a célula da data [wwwwroot\css\site.css]
+                        classes: 'celulaSelecionada', // classe CSS que estiliza a célula da data [wwwwroot\css\site.css]
                         tooltip: ''
                     }
                 }
-            }
-
-            return false
-
-        }
-
-        function desabilitarDatasPorMes(lista, mesReferencia, anoReferencia) {
-            console.log(mesReferencia)
-            let datasDesabilitadas = [];
-            dataInicial = new Date(anoReferencia, mesReferencia--, 1, 0, 0, 0, 0);
-
-            while (dataInicial.getUTCMonth() === mesReferencia) {
-                let dataAuxiliarString = dataInicial.toLocaleDateString();
-
-                if (!datasDisponiveis.includes(dataAuxiliarString)) {
-                    datasDesabilitadas.push(dataAuxiliarString);
+                return {
+                    enabled: true,
+                    classes: 'celula', // classe CSS que estiliza a célula da data [wwwwroot\css\site.css]
+                    tooltip: ''
                 }
-                dataInicial.setUTCDate(dataInicial.getUTCDate() + 1);
             }
-            return datasDesabilitadas;
+            return false;
         }
 
-        $('.datepicker').datepicker({
+        var datepicker = $('.datepicker').datepicker({
             format: 'dd/mm/yyyy',
             beforeShowDay: estilizarDatas,
-            startDate: datasDisponiveis[0],
-            endDate: datasDisponiveis[datasDisponiveis.length - 1],
+            startDate: dataInicial,
+            endDate: dataFinal,
             templates: {
                 leftArrow: '<i class="fa fa-long-arrow-left"></i>',
                 rightArrow: '<i class="fa fa-long-arrow-right"></i>'
             },
-            maxViewMode: 'days'
+            maxViewMode: 'days',
         }).on('changeDate', function (event) {
             let novaDataSelecionada = event.format('dd/mm/yyyy'); // retorna event.date formatado
             console.log(novaDataSelecionada);
             inputDataSelecionada.val(novaDataSelecionada);
             $('form').submit();
         }).on('changeMonth', function (event) {
-            mesReferencia = event.date.getUTCMonth();
-            anoReferencia = event.date.getUTCFullYear();
+            let novaDataSelecionadaMes = new Date(event.date.getUTCFullYear(), event.date.getUTCMonth(), event.date.getUTCDate()).toLocaleDateString();
+            console.log('mes', novaDataSelecionadaMes);
+            inputDataSelecionada.val(novaDataSelecionadaMes);
+            $('form').submit();
         }).on('show', function (event) {
             $('td.active').removeClass('active');
         });

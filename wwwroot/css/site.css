@@ -29,6 +29,10 @@ footer.footer {
   font-weight: bold;
 }
 
+.celulaHoje {
+  text-decoration: underline;
+}
+
 .celulaSelecionada {
   border-radius: 8px;
   background-color:  #006dcc ;
